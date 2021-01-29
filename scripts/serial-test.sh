@@ -8,6 +8,8 @@ if [[ "$(uname)" == 'Linux' ]]; then
     . /etc/os-release
     if [[ "$ID" == 'centos' ]]; then
         [[ -f /opt/rh/rh-python36/enable ]] && source /opt/rh/rh-python36/enable
+        #rh-postgresql12 only installed on unpinned centos7 environments
+        [[ -f /opt/rh/rh-postgresql12/enable ]] && source /opt/rh/rh-postgresql12/enable
     fi
     cd "$GIT_ROOT"
 fi
