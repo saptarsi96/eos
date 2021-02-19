@@ -72,6 +72,7 @@ class session_variant {
    /// \brief Commits the changes in this session into its parent.
    void commit();
 
+   std::optional<shared_bytes> read_cache(const shared_bytes& key);
    std::optional<shared_bytes> read(const shared_bytes& key);
    void                        write(const shared_bytes& key, const shared_bytes& value);
    bool                        contains(const shared_bytes& key);
@@ -155,6 +156,11 @@ void session_variant<T...>::undo() {
 template <typename... T>
 void session_variant<T...>::commit() {
    std::visit([&](auto* session) { return session->commit(); }, m_holder);
+}
+
+template <typename... T>
+std::optional<shared_bytes> session_variant<T...>::read_cache(const shared_bytes& key) {
+   return std::visit([&](auto* session) { return session->read_cache(key); }, m_holder);
 }
 
 template <typename... T>

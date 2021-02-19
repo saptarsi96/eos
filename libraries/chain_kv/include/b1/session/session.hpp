@@ -170,6 +170,7 @@ class session {
    /// \brief Commits the changes in this session into its parent.
    void commit();
 
+   std::optional<shared_bytes> read_cache(const shared_bytes& key);
    std::optional<shared_bytes> read(const shared_bytes& key);
    void                        write(const shared_bytes& key, const shared_bytes& value);
    bool                        contains(const shared_bytes& key);
@@ -516,6 +517,20 @@ void session<Parent>::commit() {
             write_through(*p);
          },
          m_parent);
+}
+
+template <typename Parent>
+std::optional<shared_bytes> session<Parent>::read_cache(const shared_bytes& key) {
+   // Find the key within the session.
+   // Check this level first and then traverse up to the parent to see if this key/value
+   // has been read and/or update.
+   auto it = m_cache.find(key);
+   if (it->second.deleted) {
+      // key has been deleted at this level.
+      return {};
+   }
+
+   return it->second.value;
 }
 
 template <typename Parent>

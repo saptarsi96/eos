@@ -134,7 +134,7 @@ namespace eosio { namespace chain { namespace backing_store {
 
       // gets a prefix that allows for only primary key iterators
       static prefix_bundle get_primary_slice_in_primaries(name code, name scope, name table, uint64_t id);
-      pv_bundle get_primary_key_value(name code, name scope, name table, uint64_t id);
+      pv_bundle get_primary_key_value(name code, name scope, name table, uint64_t id, bool cached);
       void set_value(const shared_bytes& primary_key, const payer_payload& pp);
       int32_t find_and_store_primary_key(const session_variant_type::iterator& session_iter, int32_t table_ei,
                                          const shared_bytes& type_prefix, int32_t not_found_return,
@@ -174,7 +174,7 @@ namespace eosio { namespace chain { namespace backing_store {
       EOS_ASSERT( payer != account_name(), invalid_table_payer, "must specify a valid account to pay for new record" );
       const name scope_name{scope};
       const name table_name{table};
-      const auto old_key_value = get_primary_key_value(receiver, scope_name, table_name, id);
+      const auto old_key_value = get_primary_key_value(receiver, scope_name, table_name, id, false);
 
       EOS_ASSERT( !old_key_value.value, db_rocksdb_invalid_operation_exception, "db_store_i64 called with pre-existing key");
 
@@ -207,7 +207,7 @@ namespace eosio { namespace chain { namespace backing_store {
       const auto& key_store = primary_iter_store.get(itr);
       const auto& table_store = primary_iter_store.get_table(key_store);
       EOS_ASSERT( table_store.contract == receiver, table_access_violation, "db access violation" );
-      const auto old_key_value = get_primary_key_value(receiver, table_store.scope, table_store.table, key_store.primary);
+      const auto old_key_value = get_primary_key_value(receiver, table_store.scope, table_store.table, key_store.primary, true);
 
       EOS_ASSERT( old_key_value.value, db_rocksdb_invalid_operation_exception,
                   "invariant failure in db_update_i64, iter store found to update but nothing in database");
@@ -258,7 +258,7 @@ namespace eosio { namespace chain { namespace backing_store {
       const auto& key_store = primary_iter_store.get(itr);
       const auto& table_store = primary_iter_store.get_table(key_store);
       EOS_ASSERT( table_store.contract == receiver, table_access_violation, "db access violation" );
-      const auto old_key_value = get_primary_key_value(receiver, table_store.scope, table_store.table, key_store.primary);
+      const auto old_key_value = get_primary_key_value(receiver, table_store.scope, table_store.table, key_store.primary, true);
 
       EOS_ASSERT( old_key_value.value, db_rocksdb_invalid_operation_exception,
       "invariant failure in db_remove_i64, iter store found to update but nothing in database");
@@ -289,7 +289,7 @@ namespace eosio { namespace chain { namespace backing_store {
    int32_t db_context_rocksdb::db_get_i64(int32_t itr, char* value , size_t value_size) {
       const auto& key_store = primary_iter_store.get(itr);
       const auto& table_store = primary_iter_store.get_table(key_store);
-      const auto old_key_value = get_primary_key_value(table_store.contract, table_store.scope, table_store.table, key_store.primary);
+      const auto old_key_value = get_primary_key_value(table_store.contract, table_store.scope, table_store.table, key_store.primary, true);
 
       EOS_ASSERT( old_key_value.value, db_rocksdb_invalid_operation_exception,
                   "invariant failure in db_get_i64, iter store found to update but nothing in database");
@@ -686,9 +686,9 @@ namespace eosio { namespace chain { namespace backing_store {
       return { primary_key, end_of_prefix::at_type, code };
    }
 
-   pv_bundle db_context_rocksdb::get_primary_key_value(name code, name scope, name table, uint64_t id) {
+   pv_bundle db_context_rocksdb::get_primary_key_value(name code, name scope, name table, uint64_t id, bool cached) {
       prefix_bundle primary_key = get_primary_slice_in_primaries(code, scope, table, id);
-      return { primary_key, current_session.read(primary_key.full_key) };
+      return { primary_key, (cached ? current_session.read_cache(primary_key.full_key) : current_session.read(primary_key.full_key) )};
    }
 
    void db_context_rocksdb::set_value(const shared_bytes& primary_key, const payer_payload& pp) {

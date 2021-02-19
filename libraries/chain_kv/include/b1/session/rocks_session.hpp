@@ -95,6 +95,7 @@ class session<rocksdb_t> {
    std::unordered_set<shared_bytes> updated_keys() const;
    std::unordered_set<shared_bytes> deleted_keys() const;
 
+   std::optional<shared_bytes> read_cache(const shared_bytes& key);
    std::optional<shared_bytes> read(const shared_bytes& key);
    void                        write(const shared_bytes& key, const shared_bytes& value);
    bool                        contains(const shared_bytes& key);
@@ -227,6 +228,10 @@ inline void session<rocksdb_t>::undo() {}
 inline void session<rocksdb_t>::commit() {}
 
 inline bool session<rocksdb_t>::is_deleted(const shared_bytes& key) const { return false; }
+
+inline std::optional<shared_bytes> session<rocksdb_t>::read_cache(const shared_bytes& key) {
+   return read(key);
+}
 
 inline std::optional<shared_bytes> session<rocksdb_t>::read(const shared_bytes& key) {
    auto key_slice      = rocksdb::Slice{ key.data(), key.size() };
