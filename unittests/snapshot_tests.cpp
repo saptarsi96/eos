@@ -10,6 +10,7 @@
 
 #include <contracts.hpp>
 #include <snapshots.hpp>
+#include <thread>
 
 using namespace eosio;
 using namespace testing;
@@ -287,6 +288,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_exhaustive_snapshot, SNAPSHOT_SUITE, snapshot
       auto writer = SNAPSHOT_SUITE::get_writer();
       chain.control->write_snapshot(writer);
       auto snapshot = SNAPSHOT_SUITE::finalize(writer);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 
       // create a new child at this snapshot
       sub_testers.emplace_back(chain.get_config(), SNAPSHOT_SUITE::get_reader(snapshot), generation);
