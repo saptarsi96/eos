@@ -1,4 +1,3 @@
-find_package(PkgConfig REQUIRED)
 
 add_library( blockvault_client_plugin
              blockvault_client_plugin.cpp)
@@ -8,12 +7,12 @@ target_include_directories( blockvault_client_plugin PUBLIC "${CMAKE_CURRENT_SOU
 find_package(PostgreSQL REQUIRED)
 find_package(libpqxx CONFIG REQUIRED)
 
+string(REPLACE "libpq.a" "libpgcommon.a" LIBPGCOMMON "${PostgreSQL_LIBRARIES}")
+string(REPLACE "libpq.a" "libpgport.a" LIBPGPORT "${PostgreSQL_LIBRARIES}")
+
 add_library(blockvault postgres_backend.cpp)
 target_include_directories(blockvault PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(blockvault PUBLIC PostgreSQL::PostgreSQL  
-                                        ${PostgreSQL_LIBRARY_DIRS}/libpgcommon.a 
-                                        ${PostgreSQL_LIBRARY_DIRS}/libpgport.a 
-                                        libpqxx::pqxx 
+target_link_libraries(blockvault PUBLIC libpqxx::pqxx ${LIBPGCOMMON} ${LIBPGPORT} PostgreSQL::PostgreSQL
                                         eosio_chain)
 
 target_link_libraries( blockvault_client_plugin blockvault)
