@@ -243,7 +243,7 @@ install(FILES libraries/eos-vm/LICENSE DESTINATION ${CMAKE_INSTALL_FULL_DATAROOT
 set(VCPKG_INSTALLED_SHARE ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share)
 install(FILES ${VCPKG_INSTALLED_SHARE}/rocksdb/LICENSE.leveldb DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/licenses/eosio/ RENAME LICENSE.leveldb COMPONENT base)
 
-foreach(lib IN yubihsm rocksdb amqp-cpp libpq liqpqxx)
+foreach(lib yubihsm rocksdb amqp-cpp libpq liqpqxx)
 install(FILES ${VCPKG_INSTALLED_SHARE}/${lib}/copyright DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/licenses/eosio/ RENAME LICENSE.${lib} COMPONENT base)
 endforeach()
 
