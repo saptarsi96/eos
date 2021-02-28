@@ -18,11 +18,6 @@ add_subdirectory( version )
 add_subdirectory( state_history )
 add_subdirectory( abieos )
 
-# Suppress warnings on 3rdParty Library
-add_definitions( -w )
-add_subdirectory( rocksdb )
-remove_definitions( -w )
-
 add_subdirectory( chain_kv )
 add_subdirectory( se-helpers )
 
