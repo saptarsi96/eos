@@ -1,5 +1,5 @@
 cmake_minimum_required( VERSION 3.8 )
-
+set(VCPKG_OVERLAY_PORTS ${CMAKE_SOURCE_DIR}/vcpkg-ports)
 project( EOSIO )
 include(CTest) # suppresses DartConfiguration.tcl error
 enable_testing()

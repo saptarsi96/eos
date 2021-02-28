@@ -1,0 +1,36 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index bd01b53..a6dbaa5 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -174,17 +174,10 @@ else()
+   endif ()
+ 
+   find_package (PkgConfig REQUIRED)
+-  if (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+-    if (NOT LIBCRYPTO_LDFLAGS)
+-      set (LIBCRYPTO_LDFLAGS "-lcrypto")
+-    endif()
+-    if (NOT LIBCRYPTO_VERSION)
+-      set (LIBCRYPTO_VERSION "1.1.1")
+-    endif()
+-  else()
+-    include(${CMAKE_SOURCE_DIR}/cmake/openssl.cmake)
+-    find_libcrypto()
+-  endif()
++  find_package (OpenSSL REQUIRED)
++  set(LIBCRYPTO_LDFLAGS OpenSSL::Crypto)
++  set (LIBCRYPTO_VERSION ${OPENSSL_VERSION})
++
+   if(NOT BUILD_ONLY_LIB)
+     if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+       set (LIBEDIT_LDFLAGS "-ledit")
+@@ -192,7 +185,8 @@ else()
+       pkg_search_module (LIBEDIT REQUIRED libedit)
+     endif()
+   endif()
+-  pkg_search_module (LIBCURL REQUIRED libcurl)
++  find_package(CURL CONFIG REQUIRED)
++  set(LIBCURL_LDFLAGS CURL::libcurl)
+   pkg_search_module (LIBUSB REQUIRED libusb-1.0)
+ endif()
+ 

@@ -1,9 +1,6 @@
 [submodule "libraries/softfloat"]
 	path = libraries/softfloat
 	url = https://github.com/eosio/berkeley-softfloat-3
-[submodule "libraries/yubihsm"]
-	path = libraries/yubihsm
-	url = https://github.com/Yubico/yubihsm-shell
 [submodule "libraries/eos-vm"]
 	path = libraries/eos-vm
 	url = https://github.com/eosio/eos-vm
@@ -13,12 +10,6 @@
 [submodule "libraries/abieos"]
 	path = libraries/abieos
 	url = https://github.com/EOSIO/abieos.git
-[submodule "libraries/rocksdb"]
-	path = libraries/rocksdb
-	url = https://github.com/facebook/rocksdb.git
-[submodule "libraries/amqp-cpp"]
-	path = libraries/amqp-cpp
-	url = https://github.com/CopernicaMarketingSoftware/AMQP-CPP
 [submodule "libraries/fc"]
 	path = libraries/fc
 	url = https://github.com/eosio/fc

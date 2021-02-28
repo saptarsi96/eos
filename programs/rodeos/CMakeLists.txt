@@ -32,9 +32,10 @@ endif()
 
 configure_file(config.hpp.in config.hpp ESCAPE_QUOTES)
 
+find_package(amqpcpp CONFIG REQUIRED)
+
 target_include_directories(${RODEOS_EXECUTABLE_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../libraries/abieos/src
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../libraries/amqp-cpp/include)
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../libraries/abieos/src)
 
 target_link_libraries( ${RODEOS_EXECUTABLE_NAME}
         PRIVATE appbase version
