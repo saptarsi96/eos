@@ -36,7 +36,8 @@
             "boost-convert",
             "boost-process",
             "boost-bimap",
-            "boost-dll"
+            "boost-dll",
+            "boost-lockfree"
          ]
       },
       "vcpkg-llvm": {
