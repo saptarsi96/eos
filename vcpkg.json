@@ -8,43 +8,38 @@
       "libpqxx",
       "amqpcpp",
       "rocksdb",
-      "yubihsm"
+      "yubihsm",
+      "boost-date-time",
+      "boost-test",
+      "boost-asio",
+      "boost-filesystem",
+      "boost-program-options",
+      "boost-iostreams",
+      "boost-interprocess",
+      "boost-beast",
+      "boost-multi-index",
+      "boost-multiprecision",
+      "boost-signals2",
+      "boost-accumulators",
+      "boost-hana",
+      "boost-assign",
+      "boost-convert",
+      "boost-process",
+      "boost-bimap",
+      "boost-dll",
+      "boost-lockfree"
    ],
    "$default-features-explanation": "Users using this library transitively will get all dependencies from vcpkg automatically",
    "default-features": [
-      "vcpkg-boost",
       "vcpkg-llvm"
    ],
    "features": {
-      "vcpkg-boost": {
-         "description": "boost library from vcpkg",
-         "dependencies": [
-            "boost-date-time",
-            "boost-test",
-            "boost-asio",
-            "boost-filesystem",
-            "boost-program-options",
-            "boost-iostreams",
-            "boost-interprocess",
-            "boost-beast",
-            "boost-multi-index",
-            "boost-multiprecision",
-            "boost-signals2",
-            "boost-accumulators",
-            "boost-hana",
-            "boost-assign",
-            "boost-convert",
-            "boost-process",
-            "boost-bimap",
-            "boost-dll",
-            "boost-lockfree"
-         ]
-      },
       "vcpkg-llvm": {
          "description": "LLVM from vcpkg",
          "dependencies": [
             {
                "name": "llvm",
+               "default-features": false,
                "features": [
                   "enable-rtti"
                ],
