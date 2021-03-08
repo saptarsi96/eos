@@ -148,10 +148,16 @@ public:
          kv_undo_stack_->push();
       }
    }
-   void squash() {
+   void commit(bool restart = false) {
       if (kv_undo_stack_) {
-         kv_undo_stack_->squash();
-         kv_undo_stack_ = nullptr;
+         kv_undo_stack_->top().commit();
+         kv_undo_stack_->undo();
+         if (restart) {
+            kv_undo_stack_->push();
+         }
+         else {
+            kv_undo_stack_ = nullptr;
+         }
       }
    }
 
@@ -442,23 +448,29 @@ struct controller_impl {
       if( blog_head && start_block_num <= blog_head->block_num() ) {
          ilog( "existing block log, attempting to replay from ${s} to ${n} blocks",
                ("s", start_block_num)("n", blog_head->block_num()) );
+         manage_stack::kv_undo_stack* undo_stack = kv_db.get_kv_undo_stack().get();
+         if (!undo_stack || !self.skip_db_sessions( controller::block_status::irreversible ) || !undo_stack->empty()) {
+            undo_stack = nullptr;
+         }
+         manage_stack ms_outer(undo_stack);
          try {
-            manage_stack::kv_undo_stack* undo_stack = kv_db.get_kv_undo_stack().get();
-            if (!undo_stack || !self.skip_db_sessions( controller::block_status::irreversible ) || !undo_stack->empty()) {
-               undo_stack = nullptr;
-            }
             while( std::unique_ptr<signed_block> next = blog.read_signed_block_by_num( head->block_num + 1 ) ) {
                manage_stack ms(undo_stack);
                auto block_num = next->block_num();
                replay_push_block( std::move(next), controller::block_status::irreversible );
-               ms.squash();
+               ms.commit();
                if( check_shutdown() ) break;
                if( block_num % 500 == 0 ) {
                   ilog( "${n} of ${head}", ("n", block_num)("head", blog_head->block_num()) );
                }
+               if (block_num % 500 == 0) {
+                  ms_outer.commit();
+               }
             }
          } catch(  const database_guard_exception& e ) {
             except_ptr = std::current_exception();
+            // the session for the block was rolled back, commit every thing else that processed successfully
+            ms_outer.commit();
          }
          ilog( "${n} irreversible blocks replayed", ("n", 1 + head->block_num - start_block_num) );
 
