@@ -463,7 +463,7 @@ struct controller_impl {
                if( block_num % 500 == 0 ) {
                   ilog( "${n} of ${head}", ("n", block_num)("head", blog_head->block_num()) );
                }
-               if (block_num % 500 == 0) {
+               if (block_num % conf.rocksdb_replay_batch == 0) {
                   ms_outer.commit();
                }
             }

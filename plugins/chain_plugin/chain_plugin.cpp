@@ -322,6 +322,8 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
           "Size of a single rocksdb memtable (in MiB)")
          ("persistent-storage-bytes-per-sync", bpo::value<uint64_t>()->default_value(config::default_persistent_storage_bytes_per_sync),
           "Rocksdb write rate of flushes and compactions.")
+         ("rocksdb-replay-batch", bpo::value<uint64_t>()->default_value(500),
+          "Rocksdb replay batch size.")
          ("persistent-storage-mbytes-snapshot-batch", bpo::value<uint32_t>()->default_value(config::default_persistent_storage_mbytes_batch),
           "Rocksdb batch size threshold before writing read in snapshot data to database.")
 
