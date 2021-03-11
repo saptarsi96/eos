@@ -163,6 +163,7 @@ namespace eosio { namespace chain {
             rocksdb::Options options;
 
             options.create_if_missing = true; // Creates a database if it is missing
+/*
             options.level_compaction_dynamic_level_bytes = true;
             options.bytes_per_sync = cfg.persistent_storage_bytes_per_sync; // used to control the write rate of flushes and compactions.
             options.use_adaptive_mutex = true;
@@ -205,7 +206,7 @@ namespace eosio { namespace chain {
             // breaking it into multiple,
             // smaller ones that are run simultaneously.
             options.max_subcompactions = cfg.persistent_storage_num_threads;
-
+*/
             // Full and partitioned filters in the block-based table
             // use an improved Bloom filter implementation, enabled
             // with format_version 5 (or above) because previous
@@ -213,6 +214,7 @@ namespace eosio { namespace chain {
             // faster and more accurate, especially for high bits
             // per key or millions of keys in a single (full) filter.
             rocksdb::BlockBasedTableOptions table_options;
+/*
             table_options.format_version               = 5;
             table_options.index_block_restart_interval = 16;
 
@@ -221,9 +223,9 @@ namespace eosio { namespace chain {
             // may exist or definitely does not exist in the key set.
 	          table_options.filter_policy.reset(rocksdb::NewBloomFilterPolicy(15, false));
 	          table_options.index_type = rocksdb::BlockBasedTableOptions::kBinarySearch;
-
             // Incorporates the Table options into options
             options.table_factory.reset(NewBlockBasedTableFactory(table_options));
+*/
 
             rocksdb::DB* p;
             auto         status = rocksdb::DB::Open(options, (cfg.state_dir / "chain-kv").string(), &p);
